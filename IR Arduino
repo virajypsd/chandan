@@ -1,0 +1,24 @@
+int irPin = 2;      // IR sensor output pin
+int ledPin = 13;    // LED pin (built-in on most boards)
+
+void setup() {
+  pinMode(irPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int irValue = digitalRead(irPin);
+
+  if (irValue == LOW) {
+    // Object detected
+    digitalWrite(ledPin, HIGH);
+    Serial.println("Object Detected");
+  } else {
+    // No object
+    digitalWrite(ledPin, LOW);
+    Serial.println("No Object");
+  }
+
+  delay(100);
+}
