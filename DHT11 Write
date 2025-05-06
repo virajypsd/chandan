@@ -1,0 +1,42 @@
+Thingspeak Write Data! DHT 11
+
+import time
+import board
+import adafruit_dht
+import requests
+
+# Your ThingSpeak Write API Key and Channel URL
+THINGSPEAK_API_KEY = "MQT90LNW0GUUBDHD"
+THINGSPEAK_URL = "https://api.thingspeak.com/update?api_key=MQT90LNW0GUUBDHD&field1=0"
+
+# Initialize the DHT11 sensor
+dhtDevice = adafruit_dht.DHT11(board.D17)
+
+while True:
+    try:
+        temperature_c = dhtDevice.temperature
+        humidity = dhtDevice.humidity
+
+        if temperature_c is not None and humidity is not None:
+            print(f"Temp: {temperature_c} C   Humidity: {humidity}%")
+
+            # Send data to ThingSpeak
+            payload = {
+                "api_key": THINGSPEAK_API_KEY,
+                "field1": temperature_c,
+                "field2": humidity
+            }
+            response = requests.get(THINGSPEAK_URL, params=payload)
+
+            print(f"ThingSpeak response: {response.status_code}")
+
+        else:
+            print("Sensor failure. Check wiring.")
+
+    except RuntimeError as error:
+        print(f"Sensor read error: {error.args[0]}")
+
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+
+    time.sleep(15)  # ThingSpeak allows updates every 15 seconds
