@@ -1,0 +1,29 @@
+import requests
+import json
+
+CHANNEL_ID = ‘2521028'
+READ_API_KEY = 'QA2WCXE7N4M8TGXZ'  
+
+# URL to fetch the latest entry
+url = f'https://api.thingspeak.com/channels/{CHANNEL_ID}/feeds.json?results=1'
+
+# Add API key if needed
+params = {}
+if READ_API_KEY:
+    params['api_key'] = READ_API_KEY
+
+try:
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+    
+    data = response.json()
+    latest_entry = data['feeds'][0]
+    
+    print("Latest data from ThingSpeak:")
+    for key, value in latest_entry.items():
+        print(f"{key}: {value}")
+
+except requests.RequestException as e:
+    print(f"Error: {e}")
+except (KeyError, IndexError):
+    print("No data found or unexpected response format.")
